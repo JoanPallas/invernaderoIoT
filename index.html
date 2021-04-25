@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+	<head>
+		<title>Server Web Invernadero</title> <!-- Título de la pestaña del buscador //{{title}}-->
+		<link rel="stylesheet" href='../static/style.css'/> <!--stylesheet-->
+	</head>
+	
+	<body>
+		<h1>App Invernadero Castellnou <a href="/" class="button"> REFRESCAR </a> </h1>  <!-- Utilizando condiciones para pulsadores-->
+		<br>
+		<h2>ACTUADORES</h2>
+		<h2>Electroválvulas</h2>
+		<h3>Encendido general (estado actual={{valvulaTodas}}) --> 
+			{% if espZonaVentana == True %}				<!-- Si el ESP que lo controla está conectado-->
+				{% if valvulaTodas == True %}			<!-- Si la variable indica que está encendid@-->
+					<a href="/electrovalvulaTodas/off" class="button"> APAGAR </a>	<!-- Aparece opción de apagar-->
+				{% else %} 
+					<a href="/electrovalvulaTodas/on" class="button"> ENCENDER </a>	<!-- Aparece opción de encender-->
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado	<!-- Mensaje de conectado-->
+			{% endif %}
+		</h3>
+		<h3>Bancal largo (estado actual={{valvulaLargo}}) --> 
+			{% if espZonaVentana == True %}
+				{% if valvulaLargo == True %}
+					<a href="/electrovalvulaLargo/off" class="button"> APAGAR </a>
+				{% else %}
+					<a href="/electrovalvulaLargo/on" class="button"> ENCENDER </a>
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Bancal corto (estado actual={{valvulaCorto}}) --> 
+			{% if espZonaVentana == True %}
+				{% if valvulaCorto == True %}
+					<a href="/electrovalvulaCorto/off" class="button"> APAGAR </a>
+				{% else %}
+					<a href="/electrovalvulaCorto/on" class="button"> ENCENDER </a>
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Bancal de fuera (estado actual={{valvulaFuera}}) --> 
+			{% if espZonaVentana == True %}
+				{% if valvulaFuera == True %}
+					<a href="/electrovalvulaFuera/off" class="button"> APAGAR </a>
+				{% else %}
+					<a href="/electrovalvulaFuera/on" class="button"> ENCENDER </a>
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Resistencia calefactable (estado actual={{Rcalefactable}}) --> 
+			{% if espZonaPuerta == True %}
+				{% if tAintNum <= 20.0  %}	<!-- Si el valor es inferior a 20, nos deja gestionar-->
+					{% if Rcalefactable == True %}
+						<a href="/resistenciaCalefactable/off" class="button"> APAGAR </a>
+					{% else %}
+						<a href="/resistenciaCalefactable/on" class="button"> ENCENDER </a>
+					{% endif %}
+				{% else %}		<!-- Nos bloquea las opciones-->
+					Las condiciones actuales bloquean las opciones
+				{% endif %}
+			{% else %}
+				ESP8266 puerta NO conectado
+			{% endif %}
+		</h3>
+		
+		<h2>Ventilación</h2>
+		<h3>Ventana (estado actual= {% if posiVentana == "" %} None {% else %} {{posiVentana}} {% endif %} ) -->
+			{% if espZonaVentana == True %} 
+				{% if posiVentana == "1" %} 
+					<a href="/ventana/on" class="button"> ABRIR </a>
+				{% elif posiVentana == "0" %}
+					<a href="/ventana/off" class="button"> CERRAR </a>
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Puerta (estado actual= {% if posiPuerta == "" %} None {% else %} {{posiPuerta}} {% endif %} ) -->
+			{% if espZonaPuerta == True %} 
+				{% if posiPuerta == "1" %} 
+					<a href="/puerta/on" class="button"> ABRIR </a>
+				{% elif posiPuerta =="0" %}
+					<a href="/puerta/off" class="button"> CERRAR </a>
+				{% endif %}
+			{% else %}
+				ESP8266 puerta NO conectado
+			{% endif %}
+		</h3>
+		<br>
+		
+		<h2>SENSORES</h2>
+		<h3>Temperatura ambiente interior invernadero --> 
+			{% if espZonaPuerta == True %}
+				{% if tAint != "" %}	<!-- Si hemos recibido algún valor-->
+					{{tAint}} ºC 
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 puerta NO conectado
+			{% endif %}
+		</h3>
+		<h3>Humedad ambiente interior invernadero --> 
+			{% if espZonaPuerta == True %}
+				{% if hAint != "" %}
+					{{hAint}} % 
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 puerta NO conectado
+			{% endif %}
+		</h3>
+		<h3>Humedad suelo bancal largo --> 
+			{% if espZonaVentana == True %}
+				{% if hBancalLargo == "Error" %}
+					Sensor mal conectado
+				{% elif hBancalLargo != "" %}
+					{{hBancalLargo}} %
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Humedad suelo bancal corto --> 
+			{% if espZonaPuerta == True %}
+				{% if hBancalCorto == "Error" %}
+					Sensor mal conectado
+				{% elif hBancalCorto != "" %}
+					{{hBancalCorto}} %
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 puerta NO conectado
+			{% endif %}
+		</h3>
+		<h3>Temperatura ambiente exterior --> 
+			{% if espZonaVentana == True %}
+				{% if tAext != "" %}
+					{{tAext}} ºC 
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Humedad ambiente exterior --> 
+			{% if espZonaVentana == True %}
+				{% if hAext != "" %}
+					{{hAext}} % 
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Final carrera ventana (posición) --> 
+			{% if espZonaVentana == True %}
+				{% if posiVentana == "1" %}	<!-- Si detecta 1 indica que está cerrada-->
+					Cerrada
+				{% elif posiVentana == "0" %}
+					Abierta
+				{% else %}	<!-- Ninguno de estos valores indica que aún no se ha escrito nada-->
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 ventana NO conectado
+			{% endif %}
+		</h3>
+		<h3>Final carrera puerta (posición) --> 
+			{% if espZonaPuerta == True %}
+				{% if posiPuerta == "1" %}
+					Cerrada
+				{% elif posiPuerta == "0" %}
+					Abierta
+				{% else %}
+					None
+				{% endif %}
+			{% else %}
+				ESP8266 puerta NO conectado
+			{% endif %}
+		</h3>
+		<br>
+		
+	</body>
+</html>
